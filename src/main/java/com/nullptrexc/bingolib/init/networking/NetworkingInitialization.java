@@ -1,11 +1,9 @@
 package com.nullptrexc.bingolib.init.networking;
 
 import com.nullptrexc.bingolib.BingoLib;
-import com.nullptrexc.bingolib.domain.bingo.data.BingoEvent;
 import com.nullptrexc.bingolib.domain.bingo.manager.BingoEventManager;
 import com.nullptrexc.bingolib.domain.commands.Results;
 import com.nullptrexc.bingolib.network.payload.*;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -36,6 +34,11 @@ public class NetworkingInitialization {
                 BingoEventOperationSuccessfullPayload.TYPE,
                 BingoEventOperationSuccessfullPayload.CODEC
         );
+        
+        PayloadTypeRegistry.clientboundPlay().register(
+                BingoEventToggledParticipationSuccesfully.TYPE,
+                BingoEventToggledParticipationSuccesfully.CODEC
+        );
 
         // client -> server
 
@@ -47,10 +50,6 @@ public class NetworkingInitialization {
         ServerPlayNetworking.registerGlobalReceiver(BingoEventRequestAllEventsPayload.TYPE, (payload, context) -> {
             ServerPlayer player = context.player();
             MinecraftServer server = context.server();
-
-            if (!checkPermissions(player, BingoEventRequestAllEventsPayload.TYPE)) {
-                return;
-            }
 
             ServerPlayNetworking.send(player, new BingoEventGetAllPayload(
                     BingoEventManager.getInstance().get_packed_events(server)
@@ -141,6 +140,31 @@ public class NetworkingInitialization {
                 case SUCCESS -> ServerPlayNetworking.send(
                         player,
                         new BingoEventOperationSuccessfullPayload()
+                );
+            }
+        });
+        
+        PayloadTypeRegistry.serverboundPlay().register(
+                BingoEventRequestToggleParticipationPayload.TYPE,
+                BingoEventRequestToggleParticipationPayload.CODEC
+        );
+        
+        ServerPlayNetworking.registerGlobalReceiver(BingoEventRequestToggleParticipationPayload.TYPE, (payload, context) -> {
+            ServerPlayer player = context.player();
+            MinecraftServer server = context.server();
+            
+            Results result = BingoEventManager.getInstance().toggle_event_participation(server, payload.event_id(), player.getUUID());
+            
+            String event_name = BingoEventManager.getInstance().get_event(server, payload.event_id()).getName();
+            
+            switch (result) {
+                case JOINED -> ServerPlayNetworking.send(
+                        player,
+                        new BingoEventToggledParticipationSuccesfully(event_name, true)
+                );
+                case LEFT -> ServerPlayNetworking.send(
+                        player,
+                        new BingoEventToggledParticipationSuccesfully(event_name, false)
                 );
             }
         });

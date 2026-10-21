@@ -1,17 +1,18 @@
 package com.nullptrexc.bingolib.client.init.networking;
 
+import com.ibm.icu.text.CaseMap;
+import com.nullptrexc.bingolib.client.gui.components.toasts.ModSystemToastId;
 import com.nullptrexc.bingolib.client.gui.screens.BingoEventsCrudScreen;
 import com.nullptrexc.bingolib.client.gui.screens.BingoEventsOverviewScreen;
-import com.nullptrexc.bingolib.network.payload.BingoEventGetAllPayload;
-import com.nullptrexc.bingolib.network.payload.BingoEventGetEventPayload;
-import com.nullptrexc.bingolib.network.payload.BingoEventOpenOverviewPayload;
-import com.nullptrexc.bingolib.network.payload.BingoEventOperationSuccessfullPayload;
+import com.nullptrexc.bingolib.network.payload.*;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.toasts.SystemToast;
 import net.minecraft.network.chat.Component;
 
 public class NetworkingInitialization {
+    
+    
     public static void init() {
         ClientPlayNetworking.registerGlobalReceiver(BingoEventGetAllPayload.TYPE, (payload, context) -> {
             Minecraft minecraft = context.client();
@@ -48,7 +49,7 @@ public class NetworkingInitialization {
                         : Component.translatable("gui.bingolib.event.toast.edit.successfull.body", crud.getEventName());
 
                 minecraft.gui.toastManager().addToast(
-                        new SystemToast(new SystemToast.SystemToastId(), title, body)
+                        new SystemToast(ModSystemToastId.UPDATE_CREATE_EVENT, title, body)
                 );
 
                 minecraft.gui.setScreen(new BingoEventsOverviewScreen());
@@ -57,8 +58,28 @@ public class NetworkingInitialization {
                 Component body = Component.translatable("gui.bingolib.event.toast.delete.successfull.body");
 
                 minecraft.gui.toastManager().addToast(
-                        new SystemToast(new SystemToast.SystemToastId(), title, body)
+                        new SystemToast(ModSystemToastId.DELETE_EVENT, title, body)
                 );
+            }
+        });
+
+        ClientPlayNetworking.registerGlobalReceiver(BingoEventToggledParticipationSuccesfully.TYPE, (payload, context) -> {
+            Minecraft minecraft = context.client();
+
+            Component title = payload.joined()
+                    ? Component.translatable("gui.bingolib.event.toast.join.successfull.title")
+                    : Component.translatable("gui.bingolib.event.toast.leave.successfull.title");
+
+            Component body = payload.joined()
+                    ? Component.translatable("gui.bingolib.event.toast.join.successfull.body", payload.event_name())
+                    : Component.translatable("gui.bingolib.event.toast.leave.successfull.body", payload.event_name());
+
+            minecraft.gui.toastManager().addToast(
+                    new SystemToast(ModSystemToastId.TOGGLE_PARTICIPATION, title, body)
+            );
+            
+            if (minecraft.gui.screen() instanceof BingoEventsOverviewScreen overviewScreen) {
+                overviewScreen.reload();
             }
         });
     }

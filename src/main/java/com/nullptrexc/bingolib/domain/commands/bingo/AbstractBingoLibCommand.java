@@ -9,10 +9,6 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 
-import java.util.Collection;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 public abstract class AbstractBingoLibCommand extends AbstractCommand {
     protected static BingoEventManager eventmanager() {
         return BingoEventManager.getInstance();
@@ -26,7 +22,7 @@ public abstract class AbstractBingoLibCommand extends AbstractCommand {
         return StringArgumentType.getString(ctx, "event_id");
     }
     
-    protected static ServerPlayer getPlayer(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+    protected static ServerPlayer player(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         return ctx.getSource().getPlayerOrException();
     }
     

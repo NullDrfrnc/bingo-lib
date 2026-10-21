@@ -4,6 +4,7 @@ import com.nullptrexc.bingolib.client.gui.BingoLibDefaults;
 import com.nullptrexc.bingolib.domain.bingo.data.BingoEvent;
 import com.nullptrexc.bingolib.network.payload.BingoEventDeletePayload;
 import com.nullptrexc.bingolib.network.payload.BingoEventRequestAllEventsPayload;
+import com.nullptrexc.bingolib.network.payload.BingoEventRequestToggleParticipationPayload;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -15,6 +16,7 @@ import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.permissions.Permissions;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -26,9 +28,12 @@ public class BingoEventsOverviewScreen extends Screen {
     private static final Component TITLE = Component.translatable("gui.bingolib.event.overview.title");
 
     private final HeaderAndFooterLayout layout = new HeaderAndFooterLayout(this, 33, 60);
+    
     private BingoEventsList list;
+    private Button createButton;
     private Button editButton;
     private Button removeButton;
+    protected Button joinButton;
 
     private List<BingoEvent.Data> events;
 
@@ -57,11 +62,14 @@ public class BingoEventsOverviewScreen extends Screen {
 
         LinearLayout topFooterButtons = footer.addChild(LinearLayout.horizontal().spacing(BingoLibDefaults.FOOTER_SPACING));
         LinearLayout bottomFooterButtons = footer.addChild(LinearLayout.horizontal());
-
-        topFooterButtons.addChild(Button.builder(Component.translatable("gui.bingolib.buttons.create"), button -> this.onCreate()).width(80).build());
-        editButton = topFooterButtons.addChild(Button.builder(Component.translatable("gui.bingolib.buttons.edit"), button -> list.getSelectedOpt().ifPresent(this::onModify)).width(80).build());
-        removeButton = topFooterButtons.addChild(Button.builder(Component.translatable("gui.bingolib.buttons.remove"), button -> list.getSelectedOpt().ifPresent(this::onDelete)).width(80).build());
-
+        
+        createButton = topFooterButtons.addChild(Button.builder(Component.translatable("gui.bingolib.buttons.create"), button -> this.onCreate()).width(59).build());
+        editButton = topFooterButtons.addChild(Button.builder(Component.translatable("gui.bingolib.buttons.edit"), button -> list.getSelectedOpt().ifPresent(this::onModify)).width(59).build());
+        removeButton = topFooterButtons.addChild(Button.builder(Component.translatable("gui.bingolib.buttons.remove"), button -> list.getSelectedOpt().ifPresent(this::onDelete)).width(59).build());
+        joinButton = topFooterButtons.addChild(Button.builder(Component.translatable("gui.bingolib.buttons.join"), button -> list.getSelectedOpt().ifPresent(this::onJoinOrLeave)).width(59).build());
+        
+        this.updateButtonStatus(null);
+        
         bottomFooterButtons.addChild(Button.builder(CommonComponents.GUI_DONE, button -> this.onClose()).width(248).build());
         
         layout.visitWidgets(this::addRenderableWidget);
@@ -69,15 +77,42 @@ public class BingoEventsOverviewScreen extends Screen {
     }
 
     private void updateButtonStatus(BingoEvent.Data data) {
-        if (this.editButton != null && this.removeButton != null) {
-            if (data == null) {
-                this.editButton.active = false;
-                this.removeButton.active = false;
-            } else {
-                this.editButton.active = true;
-                this.removeButton.active = true;
-            }
+        if (this.editButton != null && this.removeButton != null && this.joinButton != null) {
+            boolean condition = data != null;
+            
+            setCreateButtonActive();
+            setEditButtonActive(condition);
+            setRemoveButtonActive(condition);
+            setJoinButtonActive(condition);
         }
+    }
+
+    private void setCreateButtonActive() {
+        if (minecraft.player != null && !minecraft.player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)) {
+            this.createButton.active = false;
+            return;
+        }
+        this.createButton.active = true;
+    }
+
+    private void setEditButtonActive(boolean status) {
+        if (minecraft.player != null && !minecraft.player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)) {
+            this.editButton.active = false;
+            return;
+        }
+        this.editButton.active = status;
+    }
+    
+    private void setRemoveButtonActive(boolean status) {
+        if (minecraft.player != null && !minecraft.player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)) {
+            this.removeButton.active = false;
+            return;
+        }
+        this.removeButton.active = status;
+    }
+    
+    private void setJoinButtonActive(boolean status) {
+        this.joinButton.active = status;
     }
     
     protected void fetchData() {
@@ -92,6 +127,10 @@ public class BingoEventsOverviewScreen extends Screen {
 
     private void onModify(BingoEventsList.BingoEventEntry bingoEventEntry) {
         this.minecraft.gui.setScreen(new BingoEventsCrudScreen(bingoEventEntry.event.id()));
+    }
+
+    private void onJoinOrLeave(BingoEventsList.BingoEventEntry bingoEventEntry) {
+        ClientPlayNetworking.send(new BingoEventRequestToggleParticipationPayload(bingoEventEntry.event.id()));
     }
 
     private void onDelete(BingoEventsList.BingoEventEntry bingoEventEntry) {
@@ -124,7 +163,11 @@ public class BingoEventsOverviewScreen extends Screen {
             list.setEvents(events);
         }
     }
-    
+
+    public void reload() {
+        ClientPlayNetworking.send(new BingoEventRequestAllEventsPayload());
+    }
+
     public static class BingoEventsList extends ObjectSelectionList<BingoEventsOverviewScreen.BingoEventsList.BingoEventEntry> {
         private final @Nullable Consumer<BingoEvent.Data> onEntrySelect;
 
@@ -153,6 +196,14 @@ public class BingoEventsOverviewScreen extends Screen {
             if (this.onEntrySelect != null) {
                 this.onEntrySelect.accept(selected instanceof BingoEventsOverviewScreen.BingoEventsList.BingoEventEntry entry ? entry.event : null);
             }
+            
+            if (this.minecraft.gui.screen() instanceof BingoEventsOverviewScreen overview) {
+                Component message = !isPlayerInEvent()
+                        ? Component.translatable("gui.bingolib.buttons.join")
+                        : Component.translatable("gui.bingolib.buttons.leave");
+                
+                overview.joinButton.setMessage(message);
+            }
         }
 
         public void setEvents(List<BingoEvent.Data> events) {
@@ -161,6 +212,15 @@ public class BingoEventsOverviewScreen extends Screen {
             for (BingoEvent.Data event : events) {
                 this.addEntry(new BingoEventEntry(this.minecraft, this, event));
             }
+        }
+        
+        protected boolean isPlayerInEvent() {
+            BingoEventEntry entry = this.getSelectedOpt().orElse(null);
+            
+            if(this.minecraft.player == null || entry == null)
+                return false;
+            
+            return entry.event.players().stream().anyMatch(uuid -> this.minecraft.player.getUUID().equals(uuid));
         }
         
         public class BingoEventEntry extends ObjectSelectionList.Entry<BingoEventsOverviewScreen.BingoEventsList.BingoEventEntry> {

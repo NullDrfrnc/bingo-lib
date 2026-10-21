@@ -26,6 +26,10 @@ public class CommandInitialization {
             RequiredArgumentBuilder<CommandSourceStack, String> event_name = Commands.argument("event_name", StringArgumentType.string());
 
             LiteralArgumentBuilder<CommandSourceStack> event = Commands.literal("event");
+            
+            LiteralArgumentBuilder<CommandSourceStack> join = Commands.literal("join");
+            
+            LiteralArgumentBuilder<CommandSourceStack> leave = Commands.literal("leave");
 
             LiteralArgumentBuilder<CommandSourceStack> create = Commands.literal("create").requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS));
 
@@ -50,6 +54,14 @@ public class CommandInitialization {
                                     edit.then(
                                             // /event edit <event_id> <event_name>
                                             event_id.suggests(EVENT_IDS_SUGGESTIONS).then(event_name.executes(EditBingoEventCommand::execute))
+                                    )
+                            ).then(
+                                    join.then(
+                                            event_id.suggests(EVENT_IDS_SUGGESTIONS).executes(JoinBingoEventCommand::execute)
+                                    )
+                            ).then(
+                                    leave.then(
+                                            event_id.suggests(EVENT_IDS_SUGGESTIONS).executes(LeaveBingoEventCommand::execute)
                                     )
                             )
             );

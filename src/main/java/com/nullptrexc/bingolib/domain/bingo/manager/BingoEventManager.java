@@ -1,15 +1,12 @@
 package com.nullptrexc.bingolib.domain.bingo.manager;
 
-import com.mojang.brigadier.context.CommandContext;
-import com.nullptrexc.bingolib.BingoLib;
 import com.nullptrexc.bingolib.domain.bingo.data.BingoEvent;
 import com.nullptrexc.bingolib.domain.bingo.saved_data.SavedBingoEventData;
 import com.nullptrexc.bingolib.domain.commands.Results;
-import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.level.block.BubbleColumnBlock;
 
 import java.util.List;
+import java.util.UUID;
 
 public class BingoEventManager {
     private static BingoEventManager INSTANCE = null;
@@ -72,5 +69,17 @@ public class BingoEventManager {
 
     private SavedBingoEventData data(MinecraftServer server) {
         return SavedBingoEventData.get(server);
+    }
+
+    public Results toggle_event_participation(MinecraftServer server, String event_id,  UUID uuid) {
+        return data(server).toggle_event_participation(event_id, uuid);
+    }
+    
+    public Results join_event(MinecraftServer server, String event_id, UUID uuid) {
+        return data(server).join_event(event_id, uuid);
+    }
+    
+    public Results leave_event(MinecraftServer server, String event_id, UUID uuid) {
+        return data(server).leave_event(event_id, uuid);
     }
 }

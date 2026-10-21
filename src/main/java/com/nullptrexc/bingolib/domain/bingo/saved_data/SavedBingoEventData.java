@@ -1,13 +1,10 @@
 package com.nullptrexc.bingolib.domain.bingo.saved_data;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.mojang.serialization.Codec;
 import com.nullptrexc.bingolib.BingoLib;
 import com.nullptrexc.bingolib.domain.bingo.data.BingoEvent;
-import com.nullptrexc.bingolib.domain.bingo.manager.BingoEventManager;
 import com.nullptrexc.bingolib.domain.commands.Results;
-import jdk.jfr.Event;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.saveddata.SavedDataType;
@@ -15,6 +12,7 @@ import net.minecraft.world.level.saveddata.SavedDataType;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class SavedBingoEventData extends SavedData {
@@ -78,6 +76,7 @@ public class SavedBingoEventData extends SavedData {
         }
 
         managed.setName(event.name());
+        managed.setPlayers(Sets.newHashSet(event.players()));
 
         this.setDirty();
         return Results.SUCCESS;
@@ -85,13 +84,13 @@ public class SavedBingoEventData extends SavedData {
 
     public Results update(String bingo_id, String bingo_name) {
         BingoEvent managed = get(bingo_id);
-        
-        if(managed == null) {
+
+        if (managed == null) {
             return Results.FAIL;
         }
-        
+
         managed.setName(bingo_name);
-        
+
         this.setDirty();
         return Results.SUCCESS;
     }
@@ -118,5 +117,47 @@ public class SavedBingoEventData extends SavedData {
 
     private List<BingoEvent.Data> getData() {
         return bingo_events.stream().map(BingoEvent::packed).toList();
+    }
+
+    public Results toggle_event_participation(String event_id, UUID uuid) {
+        BingoEvent event = get(event_id);
+
+        boolean result = event.addPlayer(uuid);
+
+        if (result) {
+            setDirty();
+            return Results.JOINED;
+        }
+
+        result = event.removePlayer(uuid);
+
+        if (result) {
+            setDirty();
+            return Results.LEFT;
+        }
+
+        return Results.FAIL;
+    }
+
+    public Results join_event(String event_id, UUID uuid) {
+        boolean result = get(event_id).addPlayer(uuid);
+
+        if (result) {
+            setDirty();
+            return Results.JOINED;
+        }
+
+        return Results.ALREADY_EXISTS;
+    }
+
+    public Results leave_event(String event_id, UUID uuid) {
+        boolean result = get(event_id).removePlayer(uuid);
+
+        if (result) {
+            setDirty();
+            return Results.LEFT;
+        }
+
+        return Results.NOT_FOUND;
     }
 }

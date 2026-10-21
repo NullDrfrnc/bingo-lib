@@ -3,6 +3,7 @@ package com.nullptrexc.bingolib.domain.bingo.data;
 import com.google.common.collect.Sets;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.nullptrexc.bingolib.domain.commands.Results;
 import net.minecraft.core.UUIDUtil;
 import org.jspecify.annotations.NonNull;
 import org.lwjgl.vulkan.VkThrottleHintSubmitInfoSEC;
@@ -31,10 +32,12 @@ public class BingoEvent implements Comparable<BingoEvent>{
         this.name = name;
         this.players = players;
     }
-
-    public BingoEvent(BingoEvent.Data packed) {
-        this.id = packed.id;
-        this.name = packed.name;
+    
+    // Data constructor
+    public BingoEvent(BingoEvent.Data data) {
+        this.id = data.id();
+        this.name = data.name();
+        this.players = Sets.newHashSet(data.players());
     }
 
     public BingoEvent.Data packed() {
@@ -75,6 +78,14 @@ public class BingoEvent implements Comparable<BingoEvent>{
     public BingoEvent setPlayers(Set<UUID> players) {
         this.players = players;
         return this;
+    }
+
+    public boolean addPlayer(UUID uuid) {
+        return this.players.add(uuid);
+    }
+
+    public boolean removePlayer(UUID uuid) {
+        return this.players.remove(uuid);
     }
 
     public record Data(String id, String name, List<UUID> players) implements Comparable<Data> {

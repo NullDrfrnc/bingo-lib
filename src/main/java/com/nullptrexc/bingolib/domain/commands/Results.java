@@ -4,5 +4,7 @@ public enum Results {
     SUCCESS,
     FAIL,
     ALREADY_EXISTS,
-    NOT_FOUND
+    NOT_FOUND,
+    JOINED,
+    LEFT
 }

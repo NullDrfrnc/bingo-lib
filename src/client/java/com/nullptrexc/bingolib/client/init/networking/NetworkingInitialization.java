@@ -40,12 +40,12 @@ public class NetworkingInitialization {
 
             if (minecraft.gui.screen() instanceof BingoEventsCrudScreen crud) {
                 Component title = crud.isCreate()
-                        ? Component.translatable("gui.bingolib.events.toast.create.successfull.title")
-                        : Component.translatable("gui.bingolib.events.toast.edit.successfull.title");
+                        ? Component.translatable("gui.bingolib.event.toast.create.successfull.title")
+                        : Component.translatable("gui.bingolib.event.toast.edit.successfull.title");
 
                 Component body = crud.isCreate()
-                        ? Component.translatable("gui.bingolib.events.toast.create.successfull.body", crud.getEventName())
-                        : Component.translatable("gui.bingolib.events.toast.edit.successfull.body", crud.getEventName());
+                        ? Component.translatable("gui.bingolib.event.toast.create.successfull.body", crud.getEventName())
+                        : Component.translatable("gui.bingolib.event.toast.edit.successfull.body", crud.getEventName());
 
                 minecraft.gui.toastManager().addToast(
                         new SystemToast(new SystemToast.SystemToastId(), title, body)
@@ -53,8 +53,8 @@ public class NetworkingInitialization {
 
                 minecraft.gui.setScreen(new BingoEventsOverviewScreen());
             } else if (minecraft.gui.screen() instanceof BingoEventsOverviewScreen overview) {
-                Component title = Component.translatable("gui.bingolib.events.toast.delete.successfull.title");
-                Component body = Component.translatable("gui.bingolib.events.toast.delete.successfull.body");
+                Component title = Component.translatable("gui.bingolib.event.toast.delete.successfull.title");
+                Component body = Component.translatable("gui.bingolib.event.toast.delete.successfull.body");
 
                 minecraft.gui.toastManager().addToast(
                         new SystemToast(new SystemToast.SystemToastId(), title, body)

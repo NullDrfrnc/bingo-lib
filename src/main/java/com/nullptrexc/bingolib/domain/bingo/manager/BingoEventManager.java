@@ -54,6 +54,10 @@ public class BingoEventManager {
         return data(server).update(event);
     }
 
+    public Results update_event(MinecraftServer server, String bingo_id, String bingo_name) {
+        return data(server).update(bingo_id, bingo_name);
+    }
+
     public BingoEvent get_event(MinecraftServer server, String bingo_id) {
         return data(server).get(bingo_id);
     }

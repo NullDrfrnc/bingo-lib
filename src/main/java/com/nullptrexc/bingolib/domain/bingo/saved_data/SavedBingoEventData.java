@@ -83,6 +83,19 @@ public class SavedBingoEventData extends SavedData {
         return Results.SUCCESS;
     }
 
+    public Results update(String bingo_id, String bingo_name) {
+        BingoEvent managed = get(bingo_id);
+        
+        if(managed == null) {
+            return Results.FAIL;
+        }
+        
+        managed.setName(bingo_name);
+        
+        this.setDirty();
+        return Results.SUCCESS;
+    }
+
     public List<BingoEvent> list() {
         return bingo_events.stream().sorted().toList();
     }

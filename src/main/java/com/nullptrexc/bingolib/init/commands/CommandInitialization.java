@@ -6,14 +6,12 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.nullptrexc.bingolib.domain.bingo.data.BingoEvent;
 import com.nullptrexc.bingolib.domain.bingo.manager.BingoEventManager;
-import com.nullptrexc.bingolib.domain.commands.bingo.CreateBingoEventCommand;
-import com.nullptrexc.bingolib.domain.commands.bingo.CreateBingoEventWithIdCommand;
-import com.nullptrexc.bingolib.domain.commands.bingo.OpenBingoEventScreenCommand;
-import com.nullptrexc.bingolib.domain.commands.bingo.RemoveBingoEventCommand;
+import com.nullptrexc.bingolib.domain.commands.bingo.*;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.server.permissions.Permissions;
 
 public class CommandInitialization {
     private static final SuggestionProvider<CommandSourceStack> EVENT_IDS_SUGGESTIONS = (ctx, builder) -> SharedSuggestionProvider.suggest(
@@ -29,9 +27,11 @@ public class CommandInitialization {
 
             LiteralArgumentBuilder<CommandSourceStack> event = Commands.literal("event");
 
-            LiteralArgumentBuilder<CommandSourceStack> create = Commands.literal("create");
+            LiteralArgumentBuilder<CommandSourceStack> create = Commands.literal("create").requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS));
 
-            LiteralArgumentBuilder<CommandSourceStack> remove = Commands.literal("remove");
+            LiteralArgumentBuilder<CommandSourceStack> remove = Commands.literal("remove").requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS));
+            
+            LiteralArgumentBuilder<CommandSourceStack> edit = Commands.literal("edit").requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS));
 
             dispatcher.register(
                     // /event
@@ -45,6 +45,11 @@ public class CommandInitialization {
                                     remove.then(
                                             // /event remove <event_id>
                                             event_id.suggests(EVENT_IDS_SUGGESTIONS).executes(RemoveBingoEventCommand::execute)
+                                    )
+                            ).then(
+                                    edit.then(
+                                            // /event edit <event_id> <event_name>
+                                            event_id.suggests(EVENT_IDS_SUGGESTIONS).then(event_name.executes(EditBingoEventCommand::execute))
                                     )
                             )
             );

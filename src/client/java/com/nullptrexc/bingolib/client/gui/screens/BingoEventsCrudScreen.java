@@ -17,9 +17,9 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 
 public class BingoEventsCrudScreen extends Screen {
-    private static final Component CREATE_TITLE = Component.translatable("gui.bingolib.events.create.title");
-    private static final Component EDIT_TITLE = Component.translatable("gui.bingolib.events.edit.title");
-    private static final Component EVENT_NAME = Component.translatable("gui.bingolib.events.event_name");
+    private static final Component CREATE_TITLE = Component.translatable("gui.bingolib.event.create.title");
+    private static final Component EDIT_TITLE = Component.translatable("gui.bingolib.event.edit.title");
+    private static final Component EVENT_NAME = Component.translatable("gui.bingolib.event.event_name");
 
     private final HeaderAndFooterLayout layout = new HeaderAndFooterLayout(
             this,

@@ -23,7 +23,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 public class BingoEventsOverviewScreen extends Screen {
-    private static final Component TITLE = Component.translatable("gui.bingolib.events.overview.title");
+    private static final Component TITLE = Component.translatable("gui.bingolib.event.overview.title");
 
     private final HeaderAndFooterLayout layout = new HeaderAndFooterLayout(this, 33, 60);
     private BingoEventsList list;
@@ -59,7 +59,7 @@ public class BingoEventsOverviewScreen extends Screen {
         LinearLayout bottomFooterButtons = footer.addChild(LinearLayout.horizontal());
 
         topFooterButtons.addChild(Button.builder(Component.translatable("gui.bingolib.buttons.create"), button -> this.onCreate()).width(80).build());
-        editButton = topFooterButtons.addChild(Button.builder(Component.translatable("gui.bingolib.buttons.modify"), button -> list.getSelectedOpt().ifPresent(this::onModify)).width(80).build());
+        editButton = topFooterButtons.addChild(Button.builder(Component.translatable("gui.bingolib.buttons.edit"), button -> list.getSelectedOpt().ifPresent(this::onModify)).width(80).build());
         removeButton = topFooterButtons.addChild(Button.builder(Component.translatable("gui.bingolib.buttons.remove"), button -> list.getSelectedOpt().ifPresent(this::onDelete)).width(80).build());
 
         bottomFooterButtons.addChild(Button.builder(CommonComponents.GUI_DONE, button -> this.onClose()).width(248).build());
@@ -104,9 +104,9 @@ public class BingoEventsOverviewScreen extends Screen {
                                         bingoEventEntry.doDeleteEntry();
                                     }
                                 },
-                                Component.translatable("gui.bingolib.events.delete.question"),
-                                Component.translatable("gui.bingolib.events.delete.warning", bingoEventEntry.name),
-                                Component.translatable("gui.bingolib.events.delete.button"),
+                                Component.translatable("gui.bingolib.event.delete.question"),
+                                Component.translatable("gui.bingolib.event.delete.warning", bingoEventEntry.name),
+                                Component.translatable("gui.bingolib.event.delete.button"),
                                 CommonComponents.GUI_CANCEL
                         )
                 );

@@ -29,6 +29,7 @@ public class BingoLibEnglishLanguageProvider extends FabricLanguageProvider {
         translationBuilder.add("command.bingolib.failure_to_override", "The command you just ran does not contain a valid execute and ran the AbstractCommand's execute function instead");
         translationBuilder.add("command.bingolib.create.fail", "Failed to create [%1$s]");
         translationBuilder.add("command.bingolib.remove.fail", "Failed to remove [%1$s]");
+        translationBuilder.add("command.bingolib.edit.fail", "Failed to edit [%1%s]");
         translationBuilder.add("command.bingolib.not_found", "Failed to find [%1$s]");
 
         /* Commands - Events */
@@ -37,6 +38,8 @@ public class BingoLibEnglishLanguageProvider extends FabricLanguageProvider {
         translationBuilder.add("command.bingolib.event.create.already_exists", "A event already exists by that name");
 
         translationBuilder.add("command.bingolib.event.remove.success", "Removed event [%1$s]");
+        
+        translationBuilder.add("command.bingolib.event.edit.success", "Edited event [%1$s]");
 
         /* Commands - Bingo's */
 
@@ -73,34 +76,34 @@ public class BingoLibEnglishLanguageProvider extends FabricLanguageProvider {
         /* gui */
 
         translationBuilder.add("gui.bingolib.buttons.create", "Create");
-        translationBuilder.add("gui.bingolib.buttons.modify", "Edit");
+        translationBuilder.add("gui.bingolib.buttons.edit", "Edit");
         translationBuilder.add("gui.bingolib.buttons.remove", "Delete");
         translationBuilder.add("gui.bingolib.buttons.save", "Save");
-        translationBuilder.add("gui.bingolib.buttons.events.save", "Save event");
+        translationBuilder.add("gui.bingolib.buttons.event.save", "Save event");
 
         /* gui - toasts */
         
-        translationBuilder.add("gui.bingolib.events.toast.create.successfull.title", "Created event");
-        translationBuilder.add("gui.bingolib.events.toast.create.successfull.body", "%1$s was saved successfully!");
+        translationBuilder.add("gui.bingolib.event.toast.create.successfull.title", "Created event");
+        translationBuilder.add("gui.bingolib.event.toast.create.successfull.body", "%1$s was saved successfully!");
 
-        translationBuilder.add("gui.bingolib.events.toast.edit.successfull.title", "Edited event");
-        translationBuilder.add("gui.bingolib.events.toast.edit.successfull.body", "%1$s was updated successfully!");
+        translationBuilder.add("gui.bingolib.event.toast.edit.successfull.title", "Edited event");
+        translationBuilder.add("gui.bingolib.event.toast.edit.successfull.body", "%1$s was updated successfully!");
 
-        translationBuilder.add("gui.bingolib.events.toast.delete.successfull.title", "Deleted event");
-        translationBuilder.add("gui.bingolib.events.toast.delete.successfull.body", "Event was deleted successfully!");
+        translationBuilder.add("gui.bingolib.event.toast.delete.successfull.title", "Deleted event");
+        translationBuilder.add("gui.bingolib.event.toast.delete.successfull.body", "Event was deleted successfully!");
         
         /* gui - events */
 
-        translationBuilder.add("gui.bingolib.events.overview.title", "Events");
+        translationBuilder.add("gui.bingolib.event.overview.title", "Events");
         
-        translationBuilder.add("gui.bingolib.events.event_name", "Name");
+        translationBuilder.add("gui.bingolib.event.event_name", "Name");
         
-        translationBuilder.add("gui.bingolib.events.create.title", "Create event");
+        translationBuilder.add("gui.bingolib.event.create.title", "Create event");
         
-        translationBuilder.add("gui.bingolib.events.edit.title", "Edit event");
+        translationBuilder.add("gui.bingolib.event.edit.title", "Edit event");
         
-        translationBuilder.add("gui.bingolib.events.delete.question", "Are you sure you want to delete this event?");
-        translationBuilder.add("gui.bingolib.events.delete.warning", "%1$s will be deleted");
-        translationBuilder.add("gui.bingolib.events.delete.button", "Delete");
+        translationBuilder.add("gui.bingolib.event.delete.question", "Are you sure you want to delete this event?");
+        translationBuilder.add("gui.bingolib.event.delete.warning", "%1$s will be deleted");
+        translationBuilder.add("gui.bingolib.event.delete.button", "Delete");
     }
 }

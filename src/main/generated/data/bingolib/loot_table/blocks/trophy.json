@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:block",
+  "modifier": {
+    "type": "minecraft:copy_components",
+    "include": [
+      "minecraft:lore"
+    ],
+    "source": "block_entity"
+  },
+  "pools": [
+    {
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "bingolib:trophy"
+        }
+      ],
+      "rolls": 1
+    }
+  ]
+}

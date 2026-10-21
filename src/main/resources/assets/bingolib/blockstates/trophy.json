@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "bingolib:block/trophy"
+    },
+    "facing=east": {
+      "model": "bingolib:block/trophy",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "bingolib:block/trophy",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "bingolib:block/trophy",
+      "y": 270
+    }
+  }
+}

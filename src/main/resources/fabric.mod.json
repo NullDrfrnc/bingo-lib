@@ -3,9 +3,9 @@
 	"id": "bingolib",
 	"version": "${version}",
 	"name": "BingoLib",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "A library and mod to create, use and play bingo's in minecraft",
 	"authors": [
-		"Me!"
+		"<null/>"
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",
@@ -22,7 +22,7 @@
 			"com.nullptrexc.bingolib.client.BingoLibClient"
 		],
 		"fabric-datagen": [
-			"com.nullptrexc.bingolib.client.BingoLibDataGenerator"
+			"com.nullptrexc.bingolib.datagen.BingoLibDataGenerator"
 		]
 	},
 	"mixins": [

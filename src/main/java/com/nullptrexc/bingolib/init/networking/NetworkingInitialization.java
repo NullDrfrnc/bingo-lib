@@ -1,7 +1,7 @@
 package com.nullptrexc.bingolib.init.networking;
 
 import com.nullptrexc.bingolib.BingoLib;
-import com.nullptrexc.bingolib.domain.bingo.manager.BingoEventManager;
+import com.nullptrexc.bingolib.domain.manager.BingoEventManager;
 import com.nullptrexc.bingolib.domain.commands.Results;
 import com.nullptrexc.bingolib.network.payload.*;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;

@@ -2,10 +2,9 @@ package com.nullptrexc.bingolib.domain.commands.bingo;
 
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.nullptrexc.bingolib.domain.bingo.manager.BingoEventManager;
+import com.nullptrexc.bingolib.domain.manager.BingoEventManager;
 import com.nullptrexc.bingolib.domain.commands.Results;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;

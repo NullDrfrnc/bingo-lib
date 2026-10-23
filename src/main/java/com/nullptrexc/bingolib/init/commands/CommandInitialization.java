@@ -4,14 +4,13 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
-import com.nullptrexc.bingolib.domain.bingo.data.BingoEvent;
-import com.nullptrexc.bingolib.domain.bingo.manager.BingoEventManager;
+import com.nullptrexc.bingolib.domain.data.BingoEvent;
+import com.nullptrexc.bingolib.domain.manager.BingoEventManager;
 import com.nullptrexc.bingolib.domain.commands.bingo.*;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
-import net.minecraft.server.permissions.Permissions;
 
 public class CommandInitialization {
     private static final SuggestionProvider<CommandSourceStack> EVENT_IDS_SUGGESTIONS = (ctx, builder) -> SharedSuggestionProvider.suggest(

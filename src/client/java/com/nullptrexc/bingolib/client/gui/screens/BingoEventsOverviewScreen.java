@@ -1,7 +1,8 @@
 package com.nullptrexc.bingolib.client.gui.screens;
 
 import com.nullptrexc.bingolib.client.gui.BingoLibDefaults;
-import com.nullptrexc.bingolib.domain.bingo.data.BingoEvent;
+import com.nullptrexc.bingolib.client.gui.components.BingoLibButtons;
+import com.nullptrexc.bingolib.domain.data.BingoEvent;
 import com.nullptrexc.bingolib.network.payload.BingoEventDeletePayload;
 import com.nullptrexc.bingolib.network.payload.BingoEventRequestAllEventsPayload;
 import com.nullptrexc.bingolib.network.payload.BingoEventRequestToggleParticipationPayload;
@@ -63,14 +64,14 @@ public class BingoEventsOverviewScreen extends Screen {
         LinearLayout topFooterButtons = footer.addChild(LinearLayout.horizontal().spacing(BingoLibDefaults.FOOTER_SPACING));
         LinearLayout bottomFooterButtons = footer.addChild(LinearLayout.horizontal());
         
-        createButton = topFooterButtons.addChild(Button.builder(Component.translatable("gui.bingolib.buttons.create"), button -> this.onCreate()).width(59).build());
-        editButton = topFooterButtons.addChild(Button.builder(Component.translatable("gui.bingolib.buttons.edit"), button -> list.getSelectedOpt().ifPresent(this::onModify)).width(59).build());
-        removeButton = topFooterButtons.addChild(Button.builder(Component.translatable("gui.bingolib.buttons.remove"), button -> list.getSelectedOpt().ifPresent(this::onDelete)).width(59).build());
-        joinButton = topFooterButtons.addChild(Button.builder(Component.translatable("gui.bingolib.buttons.join"), button -> list.getSelectedOpt().ifPresent(this::onJoinOrLeave)).width(59).build());
+        createButton = topFooterButtons.addChild(BingoLibButtons.getQuadButton(Component.translatable("gui.bingolib.buttons.create"), _ -> this.onCreate()));
+        editButton = topFooterButtons.addChild(BingoLibButtons.getQuadButton(Component.translatable("gui.bingolib.buttons.edit"), _ -> list.getSelectedOpt().ifPresent(this::onModify)));
+        removeButton = topFooterButtons.addChild(BingoLibButtons.getQuadButton(Component.translatable("gui.bingolib.buttons.remove"), _ -> list.getSelectedOpt().ifPresent(this::onDelete)));
+        joinButton = topFooterButtons.addChild(BingoLibButtons.getQuadButton(Component.translatable("gui.bingolib.buttons.join"), _ -> list.getSelectedOpt().ifPresent(this::onJoinOrLeave)));
         
         this.updateButtonStatus(null);
         
-        bottomFooterButtons.addChild(Button.builder(CommonComponents.GUI_DONE, button -> this.onClose()).width(248).build());
+        bottomFooterButtons.addChild(BingoLibButtons.getSingleButton(CommonComponents.GUI_DONE, button -> this.onClose()));
         
         layout.visitWidgets(this::addRenderableWidget);
         this.repositionElements();
@@ -117,8 +118,6 @@ public class BingoEventsOverviewScreen extends Screen {
     
     protected void fetchData() {
         ClientPlayNetworking.send(new BingoEventRequestAllEventsPayload());
-        // Set to null so edit buttons are disabled initially
-        this.updateButtonStatus(null);
     }
 
     private void onCreate() {
@@ -149,6 +148,7 @@ public class BingoEventsOverviewScreen extends Screen {
                                 CommonComponents.GUI_CANCEL
                         )
                 );
+        this.updateButtonStatus(null);
     }
 
     @Override
@@ -220,7 +220,7 @@ public class BingoEventsOverviewScreen extends Screen {
             if(this.minecraft.player == null || entry == null)
                 return false;
             
-            return entry.event.players().stream().anyMatch(uuid -> this.minecraft.player.getUUID().equals(uuid));
+            return entry.event.players().stream().anyMatch(uuid -> this.minecraft.player.getUUID().equals(uuid.uuid()));
         }
         
         public class BingoEventEntry extends ObjectSelectionList.Entry<BingoEventsOverviewScreen.BingoEventsList.BingoEventEntry> {

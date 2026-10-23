@@ -1,7 +1,7 @@
 package com.nullptrexc.bingolib.network.payload;
 
 import com.nullptrexc.bingolib.BingoLib;
-import com.nullptrexc.bingolib.domain.bingo.data.BingoEvent;
+import com.nullptrexc.bingolib.domain.data.BingoEvent;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;

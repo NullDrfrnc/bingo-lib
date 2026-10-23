@@ -1,10 +1,11 @@
-package com.nullptrexc.bingolib.domain.bingo.saved_data;
+package com.nullptrexc.bingolib.domain.saved_data;
 
 import com.google.common.collect.Sets;
 import com.mojang.serialization.Codec;
 import com.nullptrexc.bingolib.BingoLib;
-import com.nullptrexc.bingolib.domain.bingo.data.BingoEvent;
+import com.nullptrexc.bingolib.domain.data.BingoEvent;
 import com.nullptrexc.bingolib.domain.commands.Results;
+import com.nullptrexc.bingolib.domain.data.Participant;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.saveddata.SavedDataType;
@@ -12,7 +13,6 @@ import net.minecraft.world.level.saveddata.SavedDataType;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class SavedBingoEventData extends SavedData {
@@ -76,7 +76,7 @@ public class SavedBingoEventData extends SavedData {
         }
 
         managed.setName(event.name());
-        managed.setPlayers(Sets.newHashSet(event.players()));
+        managed.setPlayers(Sets.newHashSet(event.players_unpacked()));
 
         this.setDirty();
         return Results.SUCCESS;
@@ -119,17 +119,20 @@ public class SavedBingoEventData extends SavedData {
         return bingo_events.stream().map(BingoEvent::packed).toList();
     }
 
-    public Results toggle_event_participation(String event_id, UUID uuid) {
+    public Results toggle_event_participation(String event_id, Participant player) {
+        if (player == null) 
+            return Results.NOT_FOUND;
+        
         BingoEvent event = get(event_id);
 
-        boolean result = event.addPlayer(uuid);
+        boolean result = event.addPlayer(player);
 
         if (result) {
             setDirty();
             return Results.JOINED;
         }
 
-        result = event.removePlayer(uuid);
+        result = event.removePlayer(player);
 
         if (result) {
             setDirty();
@@ -139,8 +142,11 @@ public class SavedBingoEventData extends SavedData {
         return Results.FAIL;
     }
 
-    public Results join_event(String event_id, UUID uuid) {
-        boolean result = get(event_id).addPlayer(uuid);
+    public Results join_event(String event_id, Participant player) {
+        if (player == null)
+            return Results.NOT_FOUND;
+        
+        boolean result = get(event_id).addPlayer(player);
 
         if (result) {
             setDirty();
@@ -150,8 +156,11 @@ public class SavedBingoEventData extends SavedData {
         return Results.ALREADY_EXISTS;
     }
 
-    public Results leave_event(String event_id, UUID uuid) {
-        boolean result = get(event_id).removePlayer(uuid);
+    public Results leave_event(String event_id, Participant player) {
+        if (player == null)
+            return Results.NOT_FOUND;
+        
+        boolean result = get(event_id).removePlayer(player);
 
         if (result) {
             setDirty();

@@ -1,9 +1,9 @@
 package com.nullptrexc.bingolib.client.gui.screens;
 
-import com.nullptrexc.bingolib.BingoLib;
 import com.nullptrexc.bingolib.client.gui.BingoLibDefaults;
+import com.nullptrexc.bingolib.client.gui.components.BingoLibButtons;
 import com.nullptrexc.bingolib.client.gui.components.ListContainer;
-import com.nullptrexc.bingolib.domain.bingo.data.BingoEvent;
+import com.nullptrexc.bingolib.domain.data.BingoEvent;
 import com.nullptrexc.bingolib.network.payload.BingoEventCreatePayload;
 import com.nullptrexc.bingolib.network.payload.BingoEventRequestEventPayload;
 import com.nullptrexc.bingolib.network.payload.BingoEventUpdatePayload;
@@ -93,8 +93,8 @@ public class BingoEventsCrudScreen extends Screen {
         LinearLayout footer = this.layout.addToFooter(LinearLayout.horizontal().spacing(BingoLibDefaults.FOOTER_SPACING));
 
         footer.defaultCellSetting().alignVerticallyMiddle();
-        footer.addChild(Button.builder(CommonComponents.GUI_CANCEL, _ -> this.onBack()).width(122).build());
-        save_button = footer.addChild(Button.builder(Component.translatable("gui.bingolib.buttons.save"), _ -> this.onSave()).width(122).build());
+        footer.addChild(BingoLibButtons.getDoubleButton(CommonComponents.GUI_CANCEL, _ -> this.onBack()));
+        save_button = footer.addChild(BingoLibButtons.getDoubleButton(Component.translatable("gui.bingolib.buttons.save"), _ -> this.onSave()));
     }
     
     private void onBack() {
@@ -103,10 +103,8 @@ public class BingoEventsCrudScreen extends Screen {
     
     private void onSave() {
         if(this.isCreate) {
-            BingoLib.LOGGER.info("Sending save packet");
             ClientPlayNetworking.send(new BingoEventCreatePayload(event.packed()));
         } else {
-            BingoLib.LOGGER.info("Saving: {}", event);
             ClientPlayNetworking.send(new BingoEventUpdatePayload(event.packed()));
         }
     }

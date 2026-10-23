@@ -1,9 +1,11 @@
-package com.nullptrexc.bingolib.domain.bingo.manager;
+package com.nullptrexc.bingolib.domain.manager;
 
-import com.nullptrexc.bingolib.domain.bingo.data.BingoEvent;
-import com.nullptrexc.bingolib.domain.bingo.saved_data.SavedBingoEventData;
+import com.nullptrexc.bingolib.domain.data.BingoEvent;
+import com.nullptrexc.bingolib.domain.data.Participant;
+import com.nullptrexc.bingolib.domain.saved_data.SavedBingoEventData;
 import com.nullptrexc.bingolib.domain.commands.Results;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
 
 import java.util.List;
 import java.util.UUID;
@@ -72,14 +74,23 @@ public class BingoEventManager {
     }
 
     public Results toggle_event_participation(MinecraftServer server, String event_id,  UUID uuid) {
-        return data(server).toggle_event_participation(event_id, uuid);
+        return data(server).toggle_event_participation(event_id, bingo_player(server, uuid));
     }
     
     public Results join_event(MinecraftServer server, String event_id, UUID uuid) {
-        return data(server).join_event(event_id, uuid);
+        return data(server).join_event(event_id, bingo_player(server, uuid));
     }
     
     public Results leave_event(MinecraftServer server, String event_id, UUID uuid) {
-        return data(server).leave_event(event_id, uuid);
+        return data(server).leave_event(event_id, bingo_player(server, uuid));
+    }
+    
+    public Participant bingo_player(MinecraftServer server, UUID uuid) {
+        ServerPlayer player = server.getPlayerList().getPlayer(uuid);
+        
+        if (player == null) 
+            return null;
+        
+        return new Participant(player.getUUID(), player.getName().getString());
     }
 }

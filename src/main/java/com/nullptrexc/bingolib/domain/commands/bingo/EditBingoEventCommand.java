@@ -1,11 +1,10 @@
 package com.nullptrexc.bingolib.domain.commands.bingo;
 
 import com.mojang.brigadier.context.CommandContext;
-import com.nullptrexc.bingolib.domain.bingo.manager.BingoEventManager;
+import com.nullptrexc.bingolib.domain.manager.BingoEventManager;
 import com.nullptrexc.bingolib.domain.commands.Results;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.MinecraftServer;
 
 public class EditBingoEventCommand extends AbstractBingoLibCommand {
     public static int execute(CommandContext<CommandSourceStack> ctx) {

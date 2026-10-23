@@ -3,7 +3,7 @@ package com.nullptrexc.bingolib.domain.commands.bingo;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.nullptrexc.bingolib.domain.bingo.manager.BingoEventManager;
+import com.nullptrexc.bingolib.domain.manager.BingoEventManager;
 import com.nullptrexc.bingolib.domain.commands.AbstractCommand;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.MinecraftServer;

@@ -1,21 +1,17 @@
-package com.nullptrexc.bingolib.domain.bingo.data;
+package com.nullptrexc.bingolib.domain.data;
 
 import com.google.common.collect.Sets;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.nullptrexc.bingolib.domain.commands.Results;
-import net.minecraft.core.UUIDUtil;
 import org.jspecify.annotations.NonNull;
-import org.lwjgl.vulkan.VkThrottleHintSubmitInfoSEC;
 
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 public class BingoEvent implements Comparable<BingoEvent>{
     private String id = "";
     private String name = "";
-    private Set<UUID> players = Sets.newHashSet();
+    private Set<Participant> players = Sets.newHashSet();
 
     public BingoEvent() {
     }
@@ -27,7 +23,7 @@ public class BingoEvent implements Comparable<BingoEvent>{
     }
 
     // GUI constructor
-    public BingoEvent(String id, String name, Set<UUID> players) {
+    public BingoEvent(String id, String name, Set<Participant> players) {
         this.id = id;
         this.name = name;
         this.players = players;
@@ -37,14 +33,14 @@ public class BingoEvent implements Comparable<BingoEvent>{
     public BingoEvent(BingoEvent.Data data) {
         this.id = data.id();
         this.name = data.name();
-        this.players = Sets.newHashSet(data.players());
+        this.players = data.players_unpacked();
     }
 
     public BingoEvent.Data packed() {
         return new BingoEvent.Data(
                 this.id,
                 this.name,
-                this.players.stream().toList()
+                this.players.stream().map(Participant::packed).toList()
         );
     }
 
@@ -71,35 +67,39 @@ public class BingoEvent implements Comparable<BingoEvent>{
         return this;
     }
 
-    public Set<UUID> getPlayers() {
+    public Set<Participant> getPlayers() {
         return players;
     }
 
-    public BingoEvent setPlayers(Set<UUID> players) {
+    public BingoEvent setPlayers(Set<Participant> players) {
         this.players = players;
         return this;
     }
 
-    public boolean addPlayer(UUID uuid) {
-        return this.players.add(uuid);
+    public boolean addPlayer(Participant player) {
+        return this.players.add(player);
     }
 
-    public boolean removePlayer(UUID uuid) {
-        return this.players.remove(uuid);
+    public boolean removePlayer(Participant player) {
+        return this.players.remove(player);
     }
 
-    public record Data(String id, String name, List<UUID> players) implements Comparable<Data> {
+    public record Data(String id, String name, List<Participant.Data> players) implements Comparable<Data> {
         public static final Codec<BingoEvent.Data> CODEC = RecordCodecBuilder.create(
                 i -> i.group(
                         Codec.STRING.fieldOf("id").forGetter(BingoEvent.Data::id),
                         Codec.STRING.fieldOf("name").forGetter(BingoEvent.Data::name),
-                        UUIDUtil.STRING_CODEC.listOf().optionalFieldOf("players", List.of()).forGetter(BingoEvent.Data::players)
+                        Participant.Data.CODEC.listOf().fieldOf("players").forGetter(Data::players)
                 ).apply(i, BingoEvent.Data::new)
         );
 
         @Override
         public int compareTo(@NonNull Data o) {
             return this.name().compareTo(o.name());
+        }
+
+        public Set<Participant> players_unpacked() {
+            return Sets.newHashSet(players.stream().map(Participant::new).toList());
         }
     }
 }
